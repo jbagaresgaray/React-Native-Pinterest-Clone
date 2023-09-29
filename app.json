@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "pinterest-clone-unsplash",
+    "slug": "pinterest-clone-unsplash",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
