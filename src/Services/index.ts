@@ -13,3 +13,4 @@ export const queryClient = new QueryClient({
 export const asyncStoragePersister = createAsyncStoragePersister({
   storage: AsyncStorage,
 });
+

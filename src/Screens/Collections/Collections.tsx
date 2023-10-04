@@ -1,16 +1,23 @@
 import { FlatList, RefreshControl, StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
 import CollectionItem from "../../Components/CollectionItem";
-import Collections from "../../Services/fake/collections.json";
 import CollectionsHeader from "./CollectionHeader";
+import { useQuery } from "@tanstack/react-query";
+import { fetchCollections } from "../../Services/Photos";
+import { MAX_PER_PAGE } from "../../Constant";
+import { useRefreshByUser } from "../../Hooks/useRefreshByUser";
 
 const CollectionScreen = () => {
-  const [refreshing, setRefreshing] = useState(false);
+  const { data: Collections, refetch } = useQuery({
+    queryKey: ["collections"],
+    queryFn: () =>
+      fetchCollections({
+        page: 1,
+        per_page: MAX_PER_PAGE,
+      }),
+  });
 
-  const onRefresh = React.useCallback(async () => {
-    setRefreshing(true);
-    setRefreshing(false);
-  }, []);
+  const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 
   const renderItem = ({ item }: any) => <CollectionItem item={item} />;
 
@@ -20,7 +27,10 @@ const CollectionScreen = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 20 }}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl
+            refreshing={isRefetchingByUser}
+            onRefresh={refetchByUser}
+          />
         }
         ListHeaderComponent={<CollectionsHeader />}
         data={Collections}

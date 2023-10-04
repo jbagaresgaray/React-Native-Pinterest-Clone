@@ -1,15 +1,23 @@
 import { FlatList, RefreshControl, StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
+import React from "react";
 import TopicItem from "../Components/TopicItem";
-import Topics from "../Services/fake/topics.json";
+import { useRefreshByUser } from "../Hooks/useRefreshByUser";
+import { useQuery } from "@tanstack/react-query";
+import { fetchTopics } from "../Services/Photos";
+import { MAX_PER_PAGE } from "../Constant";
 
 const TopicsScreen = () => {
-  const [refreshing, setRefreshing] = useState(false);
+  const { data: Topics, refetch } = useQuery({
+    queryKey: ["topics"],
+    queryFn: () =>
+      fetchTopics({
+        page: 1,
+        per_page: MAX_PER_PAGE,
+        order_by: "position",
+      }),
+  });
 
-  const onRefresh = React.useCallback(async () => {
-    setRefreshing(true);
-    setRefreshing(false);
-  }, []);
+  const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 
   const renderItem = ({ item }: any) => (
     <TopicItem
@@ -27,7 +35,10 @@ const TopicsScreen = () => {
       <FlatList
         contentContainerStyle={{ paddingBottom: 20 }}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl
+            refreshing={isRefetchingByUser}
+            onRefresh={refetchByUser}
+          />
         }
         data={Topics}
         renderItem={renderItem}

@@ -5,9 +5,14 @@ import { NavigationContainer } from "@react-navigation/native";
 import MyTabs from "./src/Navigations/Tabs";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ThemeProvider } from "@rneui/themed";
-
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { asyncStoragePersister, queryClient } from "./src/Services";
+
+if (__DEV__) {
+  import("react-query-native-devtools").then(({ addPlugin }) => {
+    addPlugin({ queryClient });
+  });
+}
 
 export default function App() {
   return (
